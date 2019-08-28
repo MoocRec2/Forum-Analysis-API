@@ -3,6 +3,8 @@ let router = express.Router();
 let mongoose = require('../db_config')
 let courseModel = mongoose.model('Course')
 
+defaultPageSize = 10
+
 /* GET endponts listing. */
 router.get('/', function (req, res, next) {
     res.send(`
@@ -19,9 +21,9 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/top-rated', (req, res) => {
-    let page = req.body.page
-    let pageSize = req.body.pageSize
-    courseModel.find({ score: { $exists: 1 } }).sort({ score: -1 }).skip(page * pageSize).limit(pageSize).exec().then(documents => {
+    let page = req.body.page ? req.body.page : 0
+    let pageSize = req.body.pageSize ? req.body.pageSize : defaultPageSize
+    courseModel.find({ course_rating: { $exists: 1 } }).sort({ course_rating: -1 }).skip(page * pageSize).limit(pageSize).exec().then(documents => {
         res.status(200).send(documents)
     }, error => {
         console.error(error)
@@ -31,8 +33,8 @@ router.get('/top-rated', (req, res) => {
 
 router.get('/search/:query', (req, res) => {
     let query = req.params.query
-    let page = req.body.page
-    let pageSize = req.body.pageSize
+    let page = req.body.page ? req.body.page : 0
+    let pageSize = req.body.pageSize ? req.body.pageSize : defaultPageSize
     courseModel.find({ title: { $regex: new RegExp(query), $options: 'i' } }).skip(page * pageSize).limit(pageSize).exec().then(documents => {
         res.status(200).send(documents)
     }, error => {
