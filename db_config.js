@@ -60,7 +60,12 @@ var courseSchema = new Schema(
 
 mongoose.model('Course', courseSchema, '')
 
-mongoose.connect('mongodb://api:backendapi1@ds157901.mlab.com:57901/moocrecv2', { useNewUrlParser: true }, error => {
+connection_strings = [
+    'mongodb://api:backendapi1@ds157901.mlab.com:57901/moocrecv2',
+    'mongodb://localhost:27017/moocrecv2'
+]
+
+mongoose.connect(connection_strings[1], { useNewUrlParser: true }, error => {
     if (error) {
         console.error(error)
         process.exit(-1)
