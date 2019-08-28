@@ -19,7 +19,9 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/top-rated', (req, res) => {
-    courseModel.find({ score: { $exists: 1 } }).sort({ score: -1 }).limit(10).exec().then(documents => {
+    let page = req.body.page
+    let pageSize = req.body.pageSize
+    courseModel.find({ score: { $exists: 1 } }).sort({ score: -1 }).skip(page * pageSize).limit(pageSize).exec().then(documents => {
         res.status(200).send(documents)
     }, error => {
         console.error(error)
@@ -29,7 +31,9 @@ router.get('/top-rated', (req, res) => {
 
 router.get('/search/:query', (req, res) => {
     let query = req.params.query
-    courseModel.find({ title: { $regex: new RegExp(query), $options: 'i' } }).limit(10).exec().then(documents => {
+    let page = req.body.page
+    let pageSize = req.body.pageSize
+    courseModel.find({ title: { $regex: new RegExp(query), $options: 'i' } }).skip(page * pageSize).limit(pageSize).exec().then(documents => {
         res.status(200).send(documents)
     }, error => {
         console.error(error)
