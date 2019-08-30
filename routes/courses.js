@@ -45,15 +45,26 @@ router.get('/search/:query', (req, res) => {
 
 router.get('/details/:id', (req, res) => {
     let id = req.params.id
-    courseModel.find({ key: id }).then(document => {
-        if (document.length >= 1)
-            res.status(200).send(document[0])
+
+    // courseModel.find({ key: id }).then(document => {
+    //     if (document.length >= 1)
+    //         res.status(200).send(document[0])
+    //     else
+    //         res.status(404).send('Not Found')
+    // }, error => {
+    //     console.error(error)
+    //     res.status(500).send('Error')
+    // })
+    courseModel.findOne({ _id: id }).then(document => {
+        if (document)
+            res.status(200).send(document)
         else
             res.status(404).send('Not Found')
     }, error => {
         console.error(error)
         res.status(500).send('Error')
     })
+
 })
 
 module.exports = router;
