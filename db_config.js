@@ -6,7 +6,7 @@ connectionString = dbCredentials.connectionString
 
 var courseSchema = new Schema(
     {
-        "_id": { type: String, required: true },
+        // "_id": { type: String, required: true },
         "key": { type: String, required: false },
         "aggregation_key": { type: String, required: false },
         // "authoring_organization_uuids": [
@@ -61,7 +61,16 @@ var courseSchema = new Schema(
     }
 )
 
-mongoose.model('Course', courseSchema, '')
+// var courseSchema = new Schema({
+//     // _id: { type: String, required: true },
+//     course_link: { type: String, required: true },
+//     platform: { type: String, required: true },
+//     rating: { type: String, required: true },
+//     subject: { type: String, required: true },
+//     title: { type: String, required: true },
+// })
+
+mongoose.model('Course', courseSchema, 'courses')
 
 connection_strings = [
     'mongodb://api:backendapi1@ds157901.mlab.com:57901/moocrecv2',
