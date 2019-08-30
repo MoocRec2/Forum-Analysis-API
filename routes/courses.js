@@ -35,14 +35,19 @@ router.post('/search', (req, res) => {
     let query = req.body.query
     let page = req.body.page ? req.body.page : 0
     let pageSize = req.body.pageSize ? req.body.pageSize : defaultPageSize
+    let consider_forum_activity = req.body.consider_forum_activity ? req.body.consider_forum_activity : false
 
+    // Building Query
     let queryObj = { title: { $regex: new RegExp(query), $options: 'i' } }
     if (req.body.platforms !== undefined && req.body.platforms !== null) {
         Object.assign(queryObj, { platform: { $in: req.body.platforms } })
     }
 
+    // Building Sort Parameters
+    sortObj = { course_rating: -1, forum_activity_rating: 1 }
+
     console.log('query', queryObj)
-    courseModel.find(queryObj).skip(page * pageSize).limit(pageSize).exec().then(documents => {
+    courseModel.find(queryObj).sort(sortObj).skip(page * pageSize).limit(pageSize).exec().then(documents => {
         res.status(200).send(documents)
     }, error => {
         console.error(error)

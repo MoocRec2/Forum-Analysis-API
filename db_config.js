@@ -78,7 +78,11 @@ connection_strings = [
     connectionString
 ]
 
-mongoose.connect(connection_strings[2], { useNewUrlParser: true }, error => {
+selected_database = connection_strings[1]
+
+console.log('Selected Database:', selected_database);
+
+mongoose.connect(selected_database, { useNewUrlParser: true }, error => {
     if (error) {
         console.error(error)
         process.exit(-1)
