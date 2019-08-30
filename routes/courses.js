@@ -31,11 +31,18 @@ router.get('/top-rated', (req, res) => {
     })
 })
 
-router.get('/search/:query', (req, res) => {
-    let query = req.params.query
+router.post('/search', (req, res) => {
+    let query = req.body.query
     let page = req.body.page ? req.body.page : 0
     let pageSize = req.body.pageSize ? req.body.pageSize : defaultPageSize
-    courseModel.find({ title: { $regex: new RegExp(query), $options: 'i' } }).skip(page * pageSize).limit(pageSize).exec().then(documents => {
+
+    let queryObj = { title: { $regex: new RegExp(query), $options: 'i' } }
+    if (req.body.platforms !== undefined && req.body.platforms !== null) {
+        Object.assign(queryObj, { platform: { $in: req.body.platforms } })
+    }
+
+    console.log('query', queryObj)
+    courseModel.find(queryObj).skip(page * pageSize).limit(pageSize).exec().then(documents => {
         res.status(200).send(documents)
     }, error => {
         console.error(error)
