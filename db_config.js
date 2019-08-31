@@ -78,7 +78,7 @@ connection_strings = [
     connectionString
 ]
 
-selected_database = connection_strings[1]
+selected_database = connection_strings[2]
 
 console.log('Selected Database:', selected_database);
 
