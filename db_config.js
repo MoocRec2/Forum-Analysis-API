@@ -70,7 +70,16 @@ var courseSchema = new Schema(
 //     title: { type: String, required: true },
 // })
 
+var userSchema = new Schema({
+    username: { type: String, required: true },
+    password: { type: String, required: true },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    preferences: { type: Object, required: false },
+})
+
 mongoose.model('Course', courseSchema, 'courses')
+mongoose.model('User', userSchema, 'users')
 
 connection_strings = [
     'mongodb://api:backendapi1@ds157901.mlab.com:57901/moocrecv2',

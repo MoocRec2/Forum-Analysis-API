@@ -79,4 +79,9 @@ router.get('/details/:id', (req, res) => {
 
 })
 
+router.get('/get-recommendation', (req, res) => {
+    
+    userPreferences = req.body.userPreferences
+})
+
 module.exports = router;
