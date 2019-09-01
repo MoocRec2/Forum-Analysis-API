@@ -71,7 +71,8 @@ router.post('/login', (req, res) => {
             token, expiresIn: expiresIn,
             username: data.username,
             firstName: data.firstName,
-            lastName: data.lastName
+            lastName: data.lastName,
+            all: data
           }
         )
       })
