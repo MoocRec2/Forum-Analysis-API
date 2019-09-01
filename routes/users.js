@@ -26,9 +26,17 @@ router.post('/register', (req, res) => {
     firstName: req.body.firstName,
     lastName: req.body.lastName
   })
-
-  new_user.save().then(data => {
-    res.status(201).send({ message: 'Registered Successfully' })
+  userModel.findOne({ username: req.body.username }).then(tempData => {
+    if (!tempData) {
+      new_user.save().then(data => {
+        res.status(201).send({ message: 'Registered Successfully' })
+      }).catch(error => {
+        res.status(400).send({ message: 'Bad Request' })
+      })
+    } else {
+      // Exists
+      res.status(400).send({ message: 'Username exists' })
+    }
   }).catch(error => {
     res.status(400).send({ message: 'Bad Request' })
   })
