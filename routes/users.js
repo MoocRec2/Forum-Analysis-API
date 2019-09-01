@@ -48,7 +48,15 @@ router.post('/login', (req, res) => {
           console.log(error)
           res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: 'Internal Server Error' })
         }
-        res.status(HttpStatus.OK).send({ message: 'Logged in', token, expiresIn: expiresIn, username: data.username })
+        res.status(HttpStatus.OK).send(
+          {
+            message: 'Logged in',
+            token, expiresIn: expiresIn,
+            username: data.username,
+            firstName: data.firstName,
+            lastName: data.lastName
+          }
+        )
       })
     } else {
       res.status(HttpStatus.BAD_REQUEST).send({ message: 'Username or password is invalid' })
