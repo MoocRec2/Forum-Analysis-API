@@ -53,7 +53,7 @@ router.get('/user-details/:username', (req, res) => {
 router.put('/update-preferences/:username', (req, res) => {
   userModel.findOne({ username: req.params.username }).then(userDoc => {
     if (userDoc) {
-      userDoc.video_preferences = req.body.video_preferences
+      userDoc.style = req.body.style
       userDoc.save().then(data => {
         res.status(HttpStatus.OK).send({ message: 'Video Preferences Updated' })
       }).catch(error => {
