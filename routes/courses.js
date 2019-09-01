@@ -23,12 +23,18 @@ router.get('/', function (req, res, next) {
 router.get('/top-rated', (req, res) => {
     let page = req.body.page ? req.body.page : 0
     let pageSize = req.body.pageSize ? req.body.pageSize : defaultPageSize
-    courseModel.find({ course_rating: { $exists: 1 } }).sort({ course_rating: -1 }).skip(page * pageSize).limit(pageSize).exec().then(documents => {
-        res.status(200).send(documents)
-    }, error => {
-        console.error(error)
-        res.status(500).send('Error')
-    })
+    courseModel.
+        aggregate([
+            { $match: {} },
+            { $project: { _id: 1, title: 1, image_url: 1, course_rating: 1, short_description: 1, platform: 1, forum_activity_rating: 1, factor: { $add: ["$course_rating", "$forum_activity_rating"] } } },
+            { $sort: { factor: -1 } }
+        ])
+        .skip(page * pageSize).limit(pageSize).exec().then(documents => {
+            res.status(200).send(documents)
+        }, error => {
+            console.error(error)
+            res.status(500).send('Error')
+        })
 })
 
 router.post('/search', (req, res) => {
@@ -80,7 +86,7 @@ router.get('/details/:id', (req, res) => {
 })
 
 router.get('/get-recommendation', (req, res) => {
-    
+
     userPreferences = req.body.userPreferences
 })
 
