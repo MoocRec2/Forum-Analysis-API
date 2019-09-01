@@ -1,6 +1,6 @@
 var mongoose = require('mongoose')
 var Schema = mongoose.Schema
-var dbCredentials = require('./db_credentials.json')
+// var dbCredentials = require('./db_credentials.json')
 
 // connectionString = dbCredentials.connectionString
 connectionString = 'mongodb://user:password@52.66.18.67:27017/moocrec-v2'
