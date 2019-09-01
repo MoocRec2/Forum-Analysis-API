@@ -1,9 +1,13 @@
 var mongoose = require('mongoose')
 var Schema = mongoose.Schema
+// var dbCredentials = require('./db_credentials.json')
+
+// connectionString = dbCredentials.connectionString
+connectionString = 'mongodb://user:password@52.66.18.67:27017/moocrec-v2'
 
 var courseSchema = new Schema(
     {
-        "_id": { type: String, required: true },
+        // "_id": { type: String, required: true },
         "key": { type: String, required: false },
         "aggregation_key": { type: String, required: false },
         // "authoring_organization_uuids": [
@@ -58,9 +62,37 @@ var courseSchema = new Schema(
     }
 )
 
-mongoose.model('Course', courseSchema, '')
+// var courseSchema = new Schema({
+//     // _id: { type: String, required: true },
+//     course_link: { type: String, required: true },
+//     platform: { type: String, required: true },
+//     rating: { type: String, required: true },
+//     subject: { type: String, required: true },
+//     title: { type: String, required: true },
+// })
 
-mongoose.connect('mongodb://api:backendapi1@ds157901.mlab.com:57901/moocrecv2', { useNewUrlParser: true }, error => {
+var userSchema = new Schema({
+    username: { type: String, required: true },
+    password: { type: String, required: true },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    preferences: { type: Object, required: false },
+})
+
+mongoose.model('Course', courseSchema, 'courses')
+mongoose.model('User', userSchema, 'users')
+
+connection_strings = [
+    'mongodb://api:backendapi1@ds157901.mlab.com:57901/moocrecv2',
+    'mongodb://localhost:27017/moocrecv2',
+    connectionString
+]
+
+selected_database = connection_strings[2]
+
+console.log('Selected Database:', selected_database);
+
+mongoose.connect(selected_database, { useNewUrlParser: true }, error => {
     if (error) {
         console.error(error)
         process.exit(-1)
