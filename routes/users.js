@@ -38,14 +38,11 @@ router.post('/login', (req, res) => {
         expiresIn = '8h'
       }
       jwt.sign({ username: req.body.username, password: req.body.password }, secretKey, { expiresIn: expiresIn }, (error, token) => {
-        console.log('Jwt Signe')
-        console.log(error)
-        console.log(token)
         if (error) {
+          console.log(error)
           res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: 'Internal Server Error' })
         }
         res.status(HttpStatus.OK).send({ message: 'Logged in', token, expiresIn: expiresIn, username: data.username })
-        res.status(HttpStatus.OK).send({ message: 'Logged in'})
       })
     } else {
       res.status(HttpStatus.BAD_REQUEST).send({ message: 'Username or password is invalid' })
