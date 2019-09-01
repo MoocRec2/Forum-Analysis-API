@@ -42,6 +42,15 @@ router.post('/register', (req, res) => {
   })
 })
 
+router.get('/user-details/:username', (req, res) => {
+  userModel.findOne({ username: req.params.username }).then(data => {
+    res.status(200).send(data)
+  }).catch(error => {
+    console.log(error)
+    res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: 'Internal Server Error' })
+  })
+})
+
 router.post('/login', (req, res) => {
   userModel.findOne({ username: req.body.username, password: req.body.password }).then(data => {
     if (data) {
