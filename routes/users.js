@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken')
 let mongoose = require('../db_config')
 let userModel = mongoose.model('User')
 const HttpStatus = require('http-status-codes');
+let auth = require('../auth')
+let verifyToken = auth.verifyToken
 
 secretKey = 'the_most_secure_secret_key_in_the_world'
 
@@ -11,6 +13,10 @@ secretKey = 'the_most_secure_secret_key_in_the_world'
 router.get('/', function (req, res, next) {
   res.send('respond with a resource');
 });
+
+router.get('/check-auth', verifyToken, (req, res) => {
+  res.status(200).send({ username: req.username })
+})
 
 router.post('/register', (req, res) => {
 
@@ -53,22 +59,7 @@ router.post('/login', (req, res) => {
   })
 })
 
-exports.verifyToken = (req, res, next) => {
-  const bearerHeader = req.headers['authorization']
-  if (bearerHeader !== undefined) {
-    const bearerToken = bearerHeader.split(' ')[1]
-    jwt.verify(bearerToken, config.security.jwtSecretKey, (error, authData) => {
-      if (error) {
-        res.sendStatus(HttpStatus.FORBIDDEN)
-      } else {
-        req.username = authData.username
-        next()
-      }
-    })
-  } else {
-    res.sendStatus(HttpStatus.FORBIDDEN)
-  }
-}
+
 
 
 module.exports = router;
