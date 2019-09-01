@@ -3,6 +3,9 @@ var router = express.Router();
 const jwt = require('jsonwebtoken')
 let mongoose = require('../db_config')
 let userModel = mongoose.model('User')
+const HttpStatus = require('http-status-codes');
+
+secretKey = 'the_most_secure_secret_key_in_the_world'
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -26,7 +29,31 @@ router.post('/register', (req, res) => {
 })
 
 router.post('/login', (req, res) => {
-
+  userModel.findOne({ username: req.body.username, password: req.body.password }).then(data => {
+    if (data) {
+      let expiresIn = ''
+      if (req.body.rememberMe) {
+        expiresIn = '1y'
+      } else {
+        expiresIn = '8h'
+      }
+      jwt.sign({ username: req.body.username, password: req.body.password }, secretKey, { expiresIn: expiresIn }, (error, token) => {
+        console.log('Jwt Signe')
+        console.log(error)
+        console.log(token)
+        if (error) {
+          res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ message: 'Internal Server Error' })
+        }
+        res.status(HttpStatus.OK).send({ message: 'Logged in', token, expiresIn: expiresIn, username: data.username })
+        res.status(HttpStatus.OK).send({ message: 'Logged in'})
+      })
+    } else {
+      res.status(HttpStatus.BAD_REQUEST).send({ message: 'Username or password is invalid' })
+    }
+  }).catch(error => {
+    console.log(error)
+    res.status(400).send({ message: 'Bad Request' })
+  })
 })
 
 exports.verifyToken = (req, res, next) => {
