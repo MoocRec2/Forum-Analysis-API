@@ -44,9 +44,13 @@ router.post('/search', (req, res) => {
     let consider_forum_activity = req.body.consider_forum_activity ? req.body.consider_forum_activity : false
 
     if (consider_forum_activity) {
+        let queryObj = { title: { $regex: new RegExp(query), $options: 'i' } }
+        if (req.body.platforms !== undefined && req.body.platforms !== null) {
+            Object.assign(queryObj, { platform: { $in: req.body.platforms } })
+        }
         courseModel.
             aggregate([
-                { $match: { title: { $regex: new RegExp(query), $options: 'i' } } },
+                { $match: queryObj },
                 { $project: { _id: 1, title: 1, image_url: 1, course_rating: 1, short_description: 1, platform: 1, forum_activity_rating: 1, factor: { $add: ["$course_rating", "$forum_activity_rating"] } } },
                 { $sort: { factor: -1 } }
             ])
