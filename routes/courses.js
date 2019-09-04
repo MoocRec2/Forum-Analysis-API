@@ -37,17 +37,36 @@ router.get('/top-rated', (req, res) => {
         })
 })
 
+router.get('/get-recommendations', (req, res) => {
+    let page = req.body.page ? req.body.page : 0
+    let pageSize = req.body.pageSize ? req.body.pageSize : defaultPageSize
+    courseModel.
+        aggregate([
+            { $match: {} },
+            { $project: { _id: 1, title: 1, image_url: 1, course_rating: 1, short_description: 1, platform: 1, forum_activity_rating: 1, factor: { $add: ["$course_rating", "$forum_activity_rating"] } } },
+            { $sort: { factor: -1 } }
+        ])
+        .skip(page * pageSize).limit(pageSize).exec().then(documents => {
+            res.status(200).send(documents)
+        }, error => {
+            console.error(error)
+            res.status(500).send('Error')
+        })
+})
+
 router.post('/search', (req, res) => {
     let query = req.body.query
     let page = req.body.page ? req.body.page : 0
     let pageSize = req.body.pageSize ? req.body.pageSize : defaultPageSize
     let consider_forum_activity = req.body.consider_forum_activity ? req.body.consider_forum_activity : false
+    let consider_video_style = req.body.consider_video_style ? req.body.consider_video_style : null
 
+    // Building Query
+    let queryObj = { title: { $regex: new RegExp(query), $options: 'i' } }
+    if (req.body.platforms !== undefined && req.body.platforms !== null) {
+        Object.assign(queryObj, { platform: { $in: req.body.platforms } })
+    }
     if (consider_forum_activity) {
-        let queryObj = { title: { $regex: new RegExp(query), $options: 'i' } }
-        if (req.body.platforms !== undefined && req.body.platforms !== null) {
-            Object.assign(queryObj, { platform: { $in: req.body.platforms } })
-        }
         courseModel.
             aggregate([
                 { $match: queryObj },
@@ -61,11 +80,7 @@ router.post('/search', (req, res) => {
                 res.status(500).send('Error')
             })
     } else {
-        // Building Query
-        let queryObj = { title: { $regex: new RegExp(query), $options: 'i' } }
-        if (req.body.platforms !== undefined && req.body.platforms !== null) {
-            Object.assign(queryObj, { platform: { $in: req.body.platforms } })
-        }
+
         // Building Sort Parameters
         sortObj = { course_rating: -1 }
 
